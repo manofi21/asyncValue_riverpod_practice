@@ -82,8 +82,15 @@ class FakeTodoRepository implements TodoRepository {
   }
 
   @override
-  Future<void> remove(String id) {
-    throw UnimplementedError();
+  Future<void> remove(String id) async {
+    await _waitRandomTime();
+    // updating mock storage
+    if (random.nextDouble() < errorLikelihood) {
+      throw const TodoException('Todo could not be removed');
+    } else {
+      mockTodoStorage =
+          mockTodoStorage.where((element) => element.id != id).toList();
+    }
   }
 
   @override

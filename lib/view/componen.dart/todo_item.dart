@@ -47,7 +47,13 @@ class TodoItem extends HookWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Checkbox(value: false, onChanged: null),
-                        IconButton(icon: Icon(Icons.delete), onPressed: null)
+                        IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              context
+                                  .read(todosNotifierProvider)
+                                  .remove(todo.id);
+                            })
                       ],
                     ))),
           ),

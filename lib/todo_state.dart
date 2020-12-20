@@ -73,7 +73,14 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
     }
   }
 
-  Future<void> refresh() => _retrieveTodos();
+  Future<void> refresh() async {
+    try {
+      final todos = await read(todoRepositoryProvider).retrieveTodos();
+      state = AsyncValue.data(todos);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
 
   Future<void> add(String description) async {
     _cacheState();
@@ -104,6 +111,18 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
 
     try {
       await read(todoRepositoryProvider).edit(id: id, description: description);
+    } on TodoException catch (e) {
+      _handleException(e);
+    }
+  }
+
+  Future<void> remove(String id) async {
+    _cacheState();
+    state = state.whenData(
+      (value) => value.where((element) => element.id != id).toList(),
+    );
+    try {
+      await read(todoRepositoryProvider).remove(id);
     } on TodoException catch (e) {
       _handleException(e);
     }
