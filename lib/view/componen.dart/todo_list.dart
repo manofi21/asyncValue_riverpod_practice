@@ -14,25 +14,52 @@ class _TodoListState extends State<TodoList> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Consumer(builder: (context, watch, child) {
-        final todo = watch(todosNotifierProvider.state);
-        return RefreshIndicator(
-            child: ListView(
-              children: todo
-                  .map((e) => ProviderScope(
-                        overrides: [currentTodo.overrideWithValue(e)],
-                        child: TodoItem(),
-                      ))
-                  .toList(),
-            ),
-            onRefresh: () {
-              Future<void> rtn() {
-                return Future.delayed(Duration(seconds: 5), () => print("aki"));
-              }
+      child: Consumer(
+        builder: (context, watch, child) {
+          final todosState = watch(todosNotifierProvider.state);
+          return todosState.when(
+            data: (todos) {
+              return RefreshIndicator(
+                onRefresh: () {
+                  Future<void> rtn() {
+                    return Future.delayed(
+                        Duration(seconds: 5), () => print("aki"));
+                  }
 
-              return rtn();
-            });
-      }),
+                  return rtn();
+                },
+                child: ListView(
+                  children: [
+                    ...todos
+                        .map(
+                          (todo) => ProviderScope(
+                            overrides: [currentTodo.overrideWithValue(todo)],
+                            child: TodoItem(),
+                          ),
+                        )
+                        .toList()
+                  ],
+                ),
+              );
+            },
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            error: (e, st) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Todos could not be loaded'),
+                  RaisedButton(
+                    onPressed: () {},
+                    child: const Text('Retry'),
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

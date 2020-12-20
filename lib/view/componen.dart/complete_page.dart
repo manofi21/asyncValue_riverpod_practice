@@ -12,30 +12,37 @@ class CompletedTodos extends StatefulWidget {
 class _CompletedTodosState extends State<CompletedTodos> {
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(child: Consumer(builder: (context, watch, child) {
-      final todo = watch(completedTodos);
-      return RefreshIndicator(
-          child: ListView(
-            children: todo
-                .map((e) => ProviderScope(
-                      overrides: [currentTodo.overrideWithValue(e)],
-                      child: TodoItem(),
-                    ))
-                .toList(),
+    return Consumer(
+      builder: (context, watch, child) {
+        final todosState = watch(completedTodos);
+        return todosState.when(
+          data: (todos) {
+            return ListView(
+              children: [
+                ...todos
+                    .map(
+                      (todo) => ProviderScope(
+                        overrides: [currentTodo.overrideWithValue(todo)],
+                        child: TodoItem(),
+                      ),
+                    )
+                    .toList()
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
           ),
-          onRefresh: () {
-            Future<void> rtn() {
-              return Future.delayed(Duration(seconds: 5), () => print("aki"));
-            }
-
-            return rtn();
-          });
-    }), onRefresh: () {
-      Future<void> rtn() {
-        return Future.delayed(Duration(seconds: 5), () => print("aki"));
-      }
-
-      return rtn();
-    });
+          error: (e, st) => const Center(
+            child: Text('Something went wrong'),
+          ),
+        );
+      },
+    );
   }
 }
+// Future<void> rtn() {
+//   return Future.delayed(Duration(seconds: 5), () => print("aki"));
+// }
+
+// return rtn();

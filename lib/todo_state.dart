@@ -1,25 +1,42 @@
 import 'package:flutter_riverpod/all.dart';
 import 'package:riverpor_syncValueChanges/repository/fake_todo_repository.dart';
+import 'package:riverpor_syncValueChanges/repository/todo_repositories.dart';
 
 import 'model/todo.dart';
 
 final currentTodo = ScopedProvider<Todo>(null);
 
-final todosNotifierProvider = StateNotifierProvider<TodoNotifier>((ref) {
-  return TodoNotifier(ref.read, sampleTodos);
+final todoRepositoryProvider = Provider<TodoRepository>((ref) {
+  throw UnimplementedError();
 });
 
-final completedTodos = Provider<List<Todo>>((ref) {
+final todosNotifierProvider = StateNotifierProvider<TodoNotifier>((ref) {
+  return TodoNotifier(ref.read);
+});
+
+final completedTodos = Provider<AsyncValue<List<Todo>>>((ref) {
   // Method 4
   final todos = ref.watch(todosNotifierProvider.state);
-  return todos.where((todo) => todo.completed).toList();
+  return todos
+      .whenData((todos) => todos.where((todo) => todo.completed).toList());
 });
 
-class TodoNotifier extends StateNotifier<List<Todo>> {
-  TodoNotifier(this.read, [List<Todo> state]) : super(state ?? <Todo>[]);
+class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
+  TodoNotifier(
+    this.read, [
+    AsyncValue<List<Todo>> todos,
+  ]) : super(todos ?? const AsyncValue.loading()) {
+    _retrieveTodos();
+  }
+
   final Reader read;
 
-  void add(String description) {
-    state = [...state]..add(Todo(description));
+  Future<void> _retrieveTodos() async {
+    try {
+      final todos = await read(todoRepositoryProvider).retrieveTodos();
+      state = AsyncValue.data(todos);
+    } on TodoException catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
   }
 }
