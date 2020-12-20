@@ -21,12 +21,7 @@ class _TodoListState extends State<TodoList> {
             data: (todos) {
               return RefreshIndicator(
                 onRefresh: () {
-                  Future<void> rtn() {
-                    return Future.delayed(
-                        Duration(seconds: 5), () => print("aki"));
-                  }
-
-                  return rtn();
+                  return context.read(todosNotifierProvider).refresh();
                 },
                 child: ListView(
                   children: [
@@ -51,7 +46,9 @@ class _TodoListState extends State<TodoList> {
                 children: [
                   const Text('Todos could not be loaded'),
                   RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read(todosNotifierProvider).retryLoadingTodo();
+                    },
                     child: const Text('Retry'),
                   )
                 ],

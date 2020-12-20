@@ -39,4 +39,16 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<void> retryLoadingTodo() async {
+    state = const AsyncValue.loading();
+    try {
+      final todos = await read(todoRepositoryProvider).retrieveTodos();
+      state = AsyncValue.data(todos);
+    } on TodoException catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> refresh() => _retrieveTodos();
 }
