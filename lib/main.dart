@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProviderScope(
         overrides: [
+          todoRepositoryProvider.overrideWithValue(FakeTodoRepository())
         ],
         child: MaterialApp(
             title: 'Flutter Demo',
