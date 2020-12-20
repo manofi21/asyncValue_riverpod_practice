@@ -61,8 +61,24 @@ class FakeTodoRepository implements TodoRepository {
   }
 
   @override
-  Future<void> edit({String id, String description}) {
-    throw UnimplementedError();
+  Future<void> edit({String id, String description}) async {
+    await _waitRandomTime();
+    // updating mock storage
+    if (random.nextDouble() < errorLikelihood) {
+      throw const TodoException('Could not update todo');
+    } else {
+      mockTodoStorage = [
+        for (final todo in mockTodoStorage)
+          if (todo.id == id)
+            Todo(
+              description,
+              id: todo.id,
+              completed: todo.completed,
+            )
+          else
+            todo,
+      ];
+    }
   }
 
   @override

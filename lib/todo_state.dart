@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:riverpor_syncValueChanges/repository/fake_todo_repository.dart';
 import 'package:riverpor_syncValueChanges/repository/todo_repositories.dart';
@@ -48,7 +49,6 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
     read(todoExceptionProvider).state = e;
   }
 
-  
   void _cacheState() {
     previousState = state;
   }
@@ -81,6 +81,29 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
 
     try {
       await read(todoRepositoryProvider).addTodo(description);
+    } on TodoException catch (e) {
+      _handleException(e);
+    }
+  }
+
+  Future<void> edit({@required String id, @required String description}) async {
+    _cacheState();
+    state = state.whenData((todos) {
+      return [
+        for (final todo in todos)
+          if (todo.id == id)
+            Todo(
+              description,
+              id: todo.id,
+              completed: todo.completed,
+            )
+          else
+            todo
+      ];
+    });
+
+    try {
+      await read(todoRepositoryProvider).edit(id: id, description: description);
     } on TodoException catch (e) {
       _handleException(e);
     }
