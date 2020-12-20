@@ -21,6 +21,8 @@ Todo Error: $error
   }
 }
 
+const double errorLikelihood = 0.4;
+
 class FakeTodoRepository implements TodoRepository {
   FakeTodoRepository() : random = Random() {
     mockTodoStorage = [...sampleTodos];
@@ -48,22 +50,28 @@ class FakeTodoRepository implements TodoRepository {
   }
 
   @override
-  Future<void> addTodo(String description) {
-      throw UnimplementedError();
+  Future<void> addTodo(String description) async {
+    await _waitRandomTime();
+    // updating mock storage
+    if (random.nextDouble() < errorLikelihood) {
+      throw const TodoException('Todo could not be added');
+    } else {
+      mockTodoStorage = [...mockTodoStorage]..add(Todo(description));
     }
-  
-    @override
-    Future<void> edit({String id, String description}) {
-      throw UnimplementedError();
-    }
-  
-    @override
-    Future<void> remove(String id) {
-      throw UnimplementedError();
-    }
-  
-    @override
-    Future<void> toggle(String id) {
+  }
+
+  @override
+  Future<void> edit({String id, String description}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> remove(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> toggle(String id) {
     throw UnimplementedError();
   }
 }

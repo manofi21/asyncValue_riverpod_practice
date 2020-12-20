@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
+
+import 'package:riverpor_syncValueChanges/todo_state.dart';
 
 class AddTodoPanel extends StatefulWidget {
   @override
@@ -8,6 +11,11 @@ class AddTodoPanel extends StatefulWidget {
 class _AddTodoPanelState extends State<AddTodoPanel> {
   final _textEditingController = TextEditingController();
 
+  void _submit([String value]) {
+    context.read(todosNotifierProvider).add(_textEditingController.value.text);
+    _textEditingController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -16,9 +24,9 @@ class _AddTodoPanelState extends State<AddTodoPanel> {
             child: TextField(
           controller: _textEditingController,
           decoration: InputDecoration(hintText: 'New todo'),
-          onSubmitted: null,
+          onSubmitted: _submit,
         )),
-        IconButton(icon: Icon(Icons.check), onPressed: null)
+        IconButton(icon: Icon(Icons.check), onPressed: _submit)
       ],
     );
   }

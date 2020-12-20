@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:riverpor_syncValueChanges/repository/fake_todo_repository.dart';
 import 'package:riverpor_syncValueChanges/todo_state.dart';
 
 import 'todo_item.dart';

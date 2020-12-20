@@ -21,6 +21,10 @@ final completedTodos = Provider<AsyncValue<List<Todo>>>((ref) {
       .whenData((todos) => todos.where((todo) => todo.completed).toList());
 });
 
+final todoExceptionProvider = StateProvider<TodoException>((ref) {
+  return null;
+});
+
 class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
   TodoNotifier(
     this.read, [
@@ -30,6 +34,25 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
   }
 
   final Reader read;
+  AsyncValue<List<Todo>> previousState;
+//////Default Method//////////////////////////////
+  void _resetState() {
+    if (previousState != null) {
+      state = previousState;
+      previousState = null;
+    }
+  }
+
+  void _handleException(TodoException e) {
+    _resetState();
+    read(todoExceptionProvider).state = e;
+  }
+
+  
+  void _cacheState() {
+    previousState = state;
+  }
+////////////////////////////////////////////////////
 
   Future<void> _retrieveTodos() async {
     try {
@@ -51,4 +74,15 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
   }
 
   Future<void> refresh() => _retrieveTodos();
+
+  Future<void> add(String description) async {
+    _cacheState();
+    state = state.whenData((todos) => [...todos]..add(Todo(description)));
+
+    try {
+      await read(todoRepositoryProvider).addTodo(description);
+    } on TodoException catch (e) {
+      _handleException(e);
+    }
+  }
 }
