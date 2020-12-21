@@ -94,7 +94,22 @@ class FakeTodoRepository implements TodoRepository {
   }
 
   @override
-  Future<void> toggle(String id) {
-    throw UnimplementedError();
+  Future<void> toggle(String id) async {
+    await _waitRandomTime();
+    // updating mock storage
+    if (random.nextDouble() < errorLikelihood) {
+      throw const TodoException('Todo could not be toggled');
+    } else {
+      mockTodoStorage = mockTodoStorage.map((todo) {
+        if (todo.id == id) {
+          return Todo(
+            todo.description,
+            id: todo.id,
+            completed: !todo.completed,
+          );
+        }
+        return todo;
+      }).toList();
+    }
   }
 }

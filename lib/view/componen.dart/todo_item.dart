@@ -17,7 +17,9 @@ class TodoItem extends HookWidget {
         child: Dismissible(
           key: UniqueKey(),
           background: Container(color: Colors.red),
-          onDismissed: null,
+          onDismissed: (_) {
+            context.read(todosNotifierProvider).remove(todo.id);
+          },
           child: FocusScope(
             child: Focus(
                 onFocusChange: (isFocused) {
@@ -46,7 +48,12 @@ class TodoItem extends HookWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Checkbox(value: false, onChanged: null),
+                        Checkbox(
+                          value: todo.completed,
+                          onChanged: (_) {
+                            context.read(todosNotifierProvider).toggle(todo.id);
+                          },
+                        ),
                         IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
