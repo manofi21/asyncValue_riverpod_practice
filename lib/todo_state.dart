@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:riverpor_syncValueChanges/repository/fake_todo_repository.dart';
 import 'package:riverpor_syncValueChanges/repository/todo_repositories.dart';
+import 'model/settings.dart';
 import 'model/todo.dart';
 
 final currentTodo = ScopedProvider<Todo>(null);
@@ -10,6 +11,9 @@ final todoRepositoryProvider = Provider<TodoRepository>((ref) {
   throw UnimplementedError();
 });
 
+final settingsProvider = StateProvider<Settings>((ref) {
+  return const Settings();
+});
 
 final todosNotifierProvider = StateNotifierProvider<TodoNotifier>((ref) {
   return TodoNotifier(ref.read);
@@ -129,6 +133,11 @@ class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
   }
 
   Future<void> toggle(String id) async {
+    if (read(settingsProvider).state.deleteOnComplete) {
+      await remove(id);
+    }
+
+    _cacheState();
     state = state.whenData(
       (value) => value.map((todo) {
         if (todo.id == id) {
