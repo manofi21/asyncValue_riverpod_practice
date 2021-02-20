@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'componen.dart/addTodoPanel.dart';
-import 'componen.dart/menu.dart';
-import 'componen.dart/todo_list.dart';
-import 'componen.dart/complete_page.dart';
+import 'componen/addTodoPanel.dart';
+import 'componen/menu.dart';
+import 'componen/todo_list.dart';
+import 'componen/complete_page.dart';
 
 class TodoScreen extends StatelessWidget {
   @override

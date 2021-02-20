@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:riverpor_syncValueChanges/view/componen.dart/todo_item.dart';
+import 'package:riverpor_syncValueChanges/view/componen/todo_item.dart';
 
 import '../../todo_state.dart';
 
