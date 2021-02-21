@@ -18,20 +18,20 @@ class TodoItem extends HookWidget {
           key: UniqueKey(),
           background: Container(color: Colors.red),
           onDismissed: (_) {
-            context.read(todosNotifierProvider).remove(todo.id);
+            context.read(todosNotifierProvider("60094bc2f02c148cda9e2f70")).remove(todo.id);
           },
           child: FocusScope(
             child: Focus(
                 onFocusChange: (isFocused) {
                   if (!isFocused) {
                     _hasFocus.value = false;
-                    context.read(todosNotifierProvider).edit(
-                        id: todo.id, description: _textEditingController.text);
+                    // context.read(todosNotifierProvider).edit(
+                    //     id: todo.id, description: _textEditingController.text);
                   } else {
-                    _textEditingController
-                      ..text = todo.description
-                      ..selection = TextSelection.fromPosition(TextPosition(
-                          offset: _textEditingController.text.length));
+                    // _textEditingController
+                    //   ..text = todo.description
+                    //   ..selection = TextSelection.fromPosition(TextPosition(
+                    //       offset: _textEditingController.text.length));
                   }
                 },
                 child: ListTile(
@@ -44,23 +44,23 @@ class TodoItem extends HookWidget {
                             focusNode: _textFocusNode,
                             controller: _textEditingController,
                           )
-                        : Text(todo.description),
+                        : Text(todo.name),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Checkbox(
-                          value: todo.completed,
-                          onChanged: (_) {
-                            context.read(todosNotifierProvider).toggle(todo.id);
-                          },
-                        ),
-                        IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              context
-                                  .read(todosNotifierProvider)
-                                  .remove(todo.id);
-                            })
+                        // Checkbox(
+                        //   value: todo.completed,
+                        //   onChanged: (_) {
+                        //     context.read(todosNotifierProvider).toggle(todo.id);
+                        //   },
+                        // ),
+                        // IconButton(
+                        //     icon: Icon(Icons.delete),
+                        //     onPressed: () {
+                        //       context
+                        //           .read(todosNotifierProvider)
+                        //           .remove(todo.id);
+                        //     })
                       ],
                     ))),
           ),
